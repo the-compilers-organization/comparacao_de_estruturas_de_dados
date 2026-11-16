@@ -1,55 +1,18 @@
-# Prerequisites
-*.d
-
-# Object files
+# executaveis
+projeto
+projeto.exe
+teste_remocao
+teste_remocao.exe
 *.o
-*.ko
-*.obj
-*.elf
 
-# Linker output
-*.ilk
-*.map
-*.exp
+# base de dados: mais de 300 MB, acima do limite de 100 MB do GitHub
+# (a pasta data/ vai para o repositorio vazia, so com o .gitkeep)
+data/*
+!data/.gitkeep
 
-# Precompiled Headers
-*.gch
-*.pch
+# resultados gerados na raiz a cada execucao (guarde as versoes finais em resultados/)
+/resultados.csv
+/resultados.md
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
-# Debug files
-*.dSYM/
-*.su
-*.idb
-*.pdb
-
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
-
-# debug information files
-*.dwo
+.vscode
