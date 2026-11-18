@@ -1,18 +1,11 @@
 # executaveis
 projeto
 projeto.exe
-teste_remocao
-teste_remocao.exe
 *.o
 
 # base de dados: mais de 300 MB, acima do limite de 100 MB do GitHub
 # (a pasta data/ vai para o repositorio vazia, so com o .gitkeep)
 data/*
 !data/.gitkeep
-
-# resultados gerados na raiz a cada execucao (guarde as versoes finais em resultados/)
-/resultados.csv
-/resultados.md
-
 
 .vscode

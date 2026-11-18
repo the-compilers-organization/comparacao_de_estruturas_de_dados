@@ -1,20 +1,17 @@
 #ifndef FUNCOES_HASH_H
 #define FUNCOES_HASH_H
 
-/* Qual funcao de hashing a tabela usa */
-#define HASH_MULTIPLICACAO 0
-#define HASH_MEIO_QUADRADO 1
+/* Qual funcao de hashing a tabela vai usar */
+#define MULTIPLICACAO 1
+#define MEIO_QUADRADO 2
 
 int hash_multiplicacao(int chave, int TABLE_SIZE);
 int hash_meio_quadrado(int chave, int TABLE_SIZE);
 
-/* Chama a funcao escolhida (tipo = HASH_MULTIPLICACAO ou HASH_MEIO_QUADRADO) */
-int calcular_hash(int chave, int TABLE_SIZE, int tipo);
+/* Chama a funcao escolhida: MULTIPLICACAO ou MEIO_QUADRADO */
+int calcular_hash(int chave, int TABLE_SIZE, int funcao);
 
-/* 1 se n e primo, 0 se nao e */
 int eh_primo(int n);
-
-/* Menor numero primo maior ou igual a n (usado para escolher o tamanho da tabela) */
 int proximo_primo(int n);
 
 #endif

@@ -19,9 +19,9 @@ Este projeto compara cinco implementações em C nas operações de **inserção
 Cada estrutura é um Tipo Abstrato de Dados: um `.h` com o tipo opaco (`typedef struct x* X`) e as operações, e um `.c` com a implementação. Toda a memória é alocada dinamicamente.
 
 ```
-projeto-hash-edl/
+comparacao_de_estruturas_de_dados/
 ├── data/                      base de dados (alunos.txt)
-├── resultados/                resultados dos experimentos documentados
+├── resultados/                resultados.csv, gerado pelo programa
 ├── src/
 │   ├── lista/                 lista unicamente encadeada
 │   │   ├── lista.h
@@ -40,7 +40,7 @@ projeto-hash-edl/
 │   │   ├── leitura.h
 │   │   └── leitura.c
 │   └── main.c                 experimentos
-|
+├── LICENSE
 └── README.md
 ```
 
@@ -54,8 +54,7 @@ Cada estrutura tem sua pasta em `src/`. Os módulos de apoio ficam em `src/utils
 | `src/utils/aluno.h/.c` | TAD `Aluno`: matrícula, nome e curso |
 | `src/utils/funcoes_hash.h/.c` | Métodos da multiplicação e do meio-quadrado; `proximo_primo` |
 | `src/utils/leitura.h/.c` | Leitura do arquivo na ordem original |
-| `src/main.c` | Experimentos: etapas, medições, arquivos de resultado |
-| `testes/teste_remocao.c` | Teste da remoção nas duas tabelas hash (34 verificações) |
+| `src/main.c` | Experimentos: etapas, medições e arquivo de resultados |
 
 Convenção de retorno: as funções de inserção devolvem **1 = sucesso, 0 = falha** (como no `1_tabela_hash.c` da disciplina). As buscas devolvem o `Aluno` encontrado ou `NULL`.
 
@@ -73,39 +72,27 @@ gcc -Wall -Wextra -O2 -std=c99 src/main.c src/utils/aluno.c src/utils/leitura.c 
 
 O comando lista todos os `.c` do projeto: os da raiz de `src/` e um de cada pasta de estrutura. Os `.h` não entram no comando, porque são incluídos pelos próprios `.c` com `#include`.
 
-No Windows, também dá para compilar com dois cliques em `compilar.bat`, que executa esse mesmo comando e gera o `projeto.exe`.
-
-**Executar:**
+**Executar** (também a partir da pasta raiz):
 
 ```bash
-./projeto                                     # lê data/alunos.txt; volumes 100000 1000000 10000000
-./projeto data/alunos.txt 100000 1000000      # escolhendo os volumes
-./projeto outra_pasta/base.txt                # outro arquivo
+./projeto          # no Windows: projeto.exe
 ```
 
-No Windows, use `projeto.exe` no lugar de `./projeto`.
+O programa lê `data/alunos.txt`, roda os volumes de 100 mil, 1 milhão e 10 milhões e grava os resultados em **`resultados/resultados.csv`**, uma linha por estrutura e etapa (para gerar gráficos em planilha). Os mesmos números aparecem na tela.
 
-**Teste da remoção** nas duas tabelas hash:
+Para testar com outros volumes, altere o vetor no início do `main`, em `src/main.c`:
 
-```bash
-gcc -Wall -Wextra -std=c99 testes/teste_remocao.c src/utils/aluno.c src/utils/funcoes_hash.c src/hash_aberto/hash_aberto.c src/hash_encadeado/hash_encadeado.c -o teste_remocao
-./teste_remocao
+```c
+int volumes[3] = {100000, 1000000, 10000000};
 ```
 
-O teste tem duas partes, rodadas com as duas funções hash. No endereçamento aberto, ele reproduz o slide 43: encontra matrículas que caem no mesmo índice inicial (B, F, G e A), insere as quatro, remove G e confere que A continua sendo encontrado; depois insere uma quinta matrícula (H) e confere que ela reutiliza a posição `REMOVIDO`. No encadeamento, coloca três matrículas na mesma lista e remove a do meio, a primeira e a única que sobrou. Ao final, mostra quantos testes passaram (34 de 34).
+Se o arquivo tiver menos registros que um volume, aquele volume é pulado com um aviso. Linhas incompletas são ignoradas e contadas.
 
-Para escolher os volumes, informe também o arquivo, porque o primeiro argumento é sempre o caminho da base: `./projeto data/alunos.txt 100000`.
-
-O programa grava dois arquivos na pasta onde foi executado:
-
-- `resultados.csv`: uma linha por estrutura e etapa (para gerar gráficos em planilha).
-- `resultados.md`: as mesmas medições já formatadas em tabelas Markdown.
-
-Se o arquivo tiver menos registros que um volume pedido, aquele volume é pulado com um aviso. Linhas incompletas são ignoradas e contadas.
+**No VS Code:** a tarefa "Compilar C/C++" compila só os `.c` da pasta do arquivo aberto, e por isso não serve para este projeto, que tem pastas separadas. Use a tarefa **"Compilar projeto"** (Terminal → Executar Tarefa) e a configuração de execução **"Executar projeto"**: as duas trabalham a partir da pasta raiz, onde o programa encontra `data/alunos.txt`.
 
 **Memória:** com 10 milhões de registros, os registros e as cinco estruturas juntos ocupam cerca de 3,3 GB de RAM (cada aluno ocupa 104 bytes com `TAM 50`, e cada posição do endereçamento aberto, 16 bytes). Feche outros programas antes de rodar.
 
-**Tempo:** a lista encadeada domina o tempo total, porque cada uma das 10.000 buscas percorre, em média, metade da lista. No ambiente de teste, os volumes de 100 mil, 1 milhão e 8 milhões levaram 4 minutos no total; com 10 milhões, conte com 6 a 8 minutos.
+**Tempo:** a lista encadeada domina o tempo total, porque cada uma das 10.000 buscas percorre, em média, metade da lista. No ambiente de teste, os volumes de 100 mil, 1 milhão e 8 milhões levaram 4 minutos e meio no total; com 10 milhões, conte com 6 a 8 minutos.
 
 ## Como o experimento funciona
 
@@ -115,9 +102,9 @@ Para cada volume (100 mil, 1 milhão e 10 milhões):
 2. **Cinco estruturas vazias** são criadas.
 3. **Três etapas de inserção**, preservando a ordem do arquivo: registros de 0 a 30%, de 30% a 60% e de 60% a 100%. O tempo de cada intervalo é medido separadamente, para cada estrutura.
 4. **Após cada etapa:** 10.000 matrículas são sorteadas entre os registros já inseridos. As **mesmas** matrículas, na **mesma** ordem, são buscadas nas cinco estruturas, e o programa confere se todas foram encontradas.
-5. **Métricas das tabelas hash, por etapa:** colisões no intervalo, fator de carga α = n/m e, como métricas extras, as sondagens extras (endereçamento aberto) e a maior lista (encadeamento).
+5. **Métricas das tabelas hash, por etapa:** colisões no intervalo e fator de carga α = n/m.
 
-Ficam **fora** das medições a leitura do arquivo, o sorteio das matrículas e o cálculo das métricas extras.
+Ficam **fora** das medições de tempo a leitura do arquivo e o sorteio das matrículas.
 
 ## Decisões de projeto e justificativas
 
@@ -136,7 +123,7 @@ A base não tem matrículas repetidas (verificamos isso no arquivo), por isso a 
 
 ### 3. Endereçamento aberto com sondagem linear
 
-Das três sondagens vistas em sala, a linear é a mais simples e a de melhor localidade de memória: as posições testadas são vizinhas, então ficam na mesma linha de cache. Richter, Alvarez e Dittrich (2015) a apontam como a mais rápida em inserções com fator de carga baixo. O ponto fraco é o agrupamento primário: Heileman e Luo (2005) mostram que o desempenho da sondagem linear varia muito com a qualidade da função hash e pode ficar muito pior que o do duplo hash no pior caso. Por isso mantivemos α ≤ 0,5 e medimos as **sondagens extras**, para verificar se houve agrupamento com cada função.
+Das três sondagens vistas em sala, a linear é a mais simples e a de melhor localidade de memória: as posições testadas são vizinhas, então ficam na mesma linha de cache. Richter, Alvarez e Dittrich (2015) a apontam como a mais rápida em inserções com fator de carga baixo. O ponto fraco é o agrupamento primário: Heileman e Luo (2005) mostram que o desempenho da sondagem linear varia muito com a qualidade da função hash e pode ficar muito pior que o do duplo hash no pior caso. Por isso mantivemos α ≤ 0,5.
 
 ### 4. Primeira função: método da multiplicação
 
@@ -185,10 +172,10 @@ Nos dois casos, só a posição ou o nó são liberados. O `Aluno` não é liber
 
 Seguimos a definição do enunciado: conta-se uma colisão quando uma nova matrícula produz um **índice inicial** que já foi produzido por outra.
 
-- **Endereçamento aberto:** um vetor `indice_usado[m]` marca os índices iniciais já produzidos. Não basta olhar se a posição está ocupada, porque ela pode estar ocupada por um elemento deslocado de outra posição pela sondagem.
+- **Endereçamento aberto:** um vetor `ja_usado[m]` marca os índices iniciais já produzidos. Não basta olhar se a posição está ocupada, porque ela pode estar ocupada por um elemento deslocado de outra posição pela sondagem.
 - **Encadeamento:** como não há remoções, a lista da posição não estar vazia significa exatamente que o índice já foi produzido.
 
-Como as duas estratégias usam a mesma função para o índice inicial, **a mesma função dá o mesmo número de colisões nas duas estratégias**. Isso serve de verificação de que a contagem está correta. A diferença de desempenho entre as estratégias aparece nos tempos e nas sondagens extras.
+Como as duas estratégias usam a mesma função para o índice inicial, **a mesma função dá o mesmo número de colisões nas duas estratégias**. Isso serve de verificação de que a contagem está correta. A diferença de desempenho entre as estratégias aparece nos tempos.
 
 Para comparação, se a função espalhasse as chaves de forma perfeitamente aleatória, o número esperado de colisões após inserir n chaves seria n − m(1 − (1 − 1/m)ⁿ). Com α = 0,5, isso dá cerca de 21% das inserções.
 
@@ -196,16 +183,17 @@ Para comparação, se a função espalhasse as chaves de forma perfeitamente ale
 
 - **As estruturas guardam a matrícula e um ponteiro para `Aluno`.** Cada registro é criado uma vez na leitura, e as cinco estruturas apontam para ele, sem copiar 10 milhões de registros cinco vezes. A matrícula também fica no próprio nó ou item (`chave`), como na `struct elem` vista em aula. Assim a busca compara a chave direto, sem ir até o registro a cada passo, e as cinco estruturas comparam do mesmo jeito. O nó continua com 32 bytes na memória, por isso esse campo não aumenta o consumo.
 - **Medição com `clock()`**, de `time.h`. No Linux a resolução é de microssegundos. No Windows ela é de cerca de 1 ms, por isso tempos muito curtos (buscas nas tabelas hash com 100 mil registros) podem aparecer como 0 ou 1 ms.
-- **Gerador aleatório próprio** (congruencial linear de 64 bits, semente fixa 2026). O `rand()` do Windows só vai até 32.767 e não alcançaria posições na casa dos milhões. Com semente fixa, o sorteio é o mesmo em qualquer computador.
-- **Tipos inteiros:** o projeto usa `int` em tudo, exceto em dois lugares que precisam de 64 bits: o quadrado do meio-quadrado (`long long`) e o gerador aleatório (`unsigned long long`, cuja conta depende do estouro controlado de um `unsigned`). Os contadores cabem em `int`: com 10 milhões de registros, colisões e sondagens extras ficam na casa dos milhões, e o limite do `int` é 2,1 bilhões.
+- **Sorteio com `rand()`** e semente fixa (`srand(2026)`), para o sorteio se repetir a cada execução. No Windows, o `rand()` só vai até 32.767 e não alcançaria posições na casa dos milhões, então a função `sortear` junta dois sorteios: `(rand() % 32768) * 32768 + rand() % 32768`, que vai até cerca de 1 bilhão.
+- **Tipos inteiros:** o projeto usa `int` em tudo, exceto no quadrado do meio-quadrado (`long long`), que não cabe em `int`. Os contadores de colisões cabem em `int`: com 10 milhões de registros, ficam na casa do milhão, e o limite do `int` é 2,1 bilhões.
+- **Código simples:** o projeto usa só recursos de programação estruturada em C (`struct`, ponteiros, `malloc`/`free`, `if`, `for`, `while` e funções). Cada estrutura tem funções separadas e curtas, e o `main.c` testa as cinco estruturas uma depois da outra, sem truques.
 
 ## Resultados
 
-Os resultados abaixo foram obtidos num ambiente de teste (Linux em nuvem, processador Intel Xeon, 2 núcleos, 8 GB de RAM, `gcc 13.3 -O2`). **Antes de entregar, rode o programa na máquina da equipe** e substitua estas tabelas pelas do seu `resultados.md`: os valores absolutos mudam de computador para computador, mas as conclusões devem se manter.
+Os resultados abaixo foram obtidos num ambiente de teste (Linux em nuvem, processador Intel Xeon, 2 núcleos, 8 GB de RAM, `gcc 13.3 -O2`). **Antes de entregar, rode o programa na máquina da equipe** e substitua estas tabelas pelos números do seu `resultados/resultados.csv`: os valores absolutos mudam de computador para computador, mas as conclusões devem se manter.
 
 **Base usada nestes testes:** o arquivo recebido tinha 8.282.764 registros completos (a última linha estava cortada), por isso o terceiro volume foi rodado com **8 milhões**, como prévia do de 10 milhões. Com a base completa, o comando padrão roda os três volumes do enunciado.
 
-Arquivos completos: [`resultados/resultados_ambiente_teste.md`](resultados/resultados_ambiente_teste.md) e [`resultados/resultados_ambiente_teste.csv`](resultados/resultados_ambiente_teste.csv). Em todas as etapas, as cinco estruturas encontraram as 10.000 matrículas buscadas.
+Arquivo completo: [`resultados/resultados_ambiente_teste.csv`](resultados/resultados_ambiente_teste.csv). Em todas as etapas, as cinco estruturas encontraram as 10.000 matrículas buscadas.
 
 ### 100.000 registros (TABLE_SIZE = 200.003)
 
@@ -213,18 +201,18 @@ Tempos em milissegundos. Inserção = tempo do intervalo; busca = 10.000 buscas 
 
 | Estrutura | Inserção 0–30% | Inserção 30–60% | Inserção 60–100% | Busca 30% | Busca 60% | Busca 100% |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Lista encadeada | 1,49 | 1,47 | 1,11 | 200,14 | 411,93 | 858,40 |
-| Hash aberto + multiplicacao | 2,04 | 1,26 | 2,05 | 0,29 | 0,25 | 0,25 |
-| Hash aberto + meio-quadrado | 1,36 | 1,27 | 2,02 | 0,19 | 0,23 | 0,27 |
-| Hash encadeado + multiplicacao | 3,11 | 2,11 | 3,50 | 0,18 | 0,32 | 0,39 |
-| Hash encadeado + meio-quadrado | 2,46 | 2,37 | 2,72 | 0,23 | 0,33 | 0,39 |
+| Lista encadeada | 1,25 | 0,91 | 1,01 | 197,06 | 402,51 | 860,59 |
+| Hash aberto + multiplicacao | 1,12 | 1,44 | 2,74 | 0,13 | 0,20 | 0,27 |
+| Hash aberto + meio-quadrado | 1,58 | 1,43 | 2,62 | 0,15 | 0,23 | 0,29 |
+| Hash encadeado + multiplicacao | 2,19 | 1,99 | 3,74 | 0,23 | 0,30 | 0,44 |
+| Hash encadeado + meio-quadrado | 2,63 | 2,49 | 3,83 | 0,33 | 0,27 | 0,54 |
 
-| Tabela hash | Colisões 0–30% | Colisões 30–60% | Colisões 60–100% | α após 30% / 60% / 100% | Sondagens extras (total) | Maior lista (100%) |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Hash aberto + multiplicacao | 2.176 | 6.073 | 13.215 | 0,15 / 0,30 / 0,50 | 50.422 | - |
-| Hash aberto + meio-quadrado | 2.150 | 6.011 | 13.199 | 0,15 / 0,30 / 0,50 | 49.875 | - |
-| Hash encadeado + multiplicacao | 2.176 | 6.073 | 13.215 | 0,15 / 0,30 / 0,50 | - | 6 |
-| Hash encadeado + meio-quadrado | 2.150 | 6.011 | 13.199 | 0,15 / 0,30 / 0,50 | - | 6 |
+| Tabela hash | Colisões 0–30% | Colisões 30–60% | Colisões 60–100% | Colisões (total) | α após 30% / 60% / 100% |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Hash aberto + multiplicacao | 2.176 | 6.073 | 13.215 | 21.464 | 0,15 / 0,30 / 0,50 |
+| Hash aberto + meio-quadrado | 2.150 | 6.011 | 13.199 | 21.360 | 0,15 / 0,30 / 0,50 |
+| Hash encadeado + multiplicacao | 2.176 | 6.073 | 13.215 | 21.464 | 0,15 / 0,30 / 0,50 |
+| Hash encadeado + meio-quadrado | 2.150 | 6.011 | 13.199 | 21.360 | 0,15 / 0,30 / 0,50 |
 
 ### 1.000.000 registros (TABLE_SIZE = 2.000.003)
 
@@ -232,18 +220,18 @@ Tempos em milissegundos. Inserção = tempo do intervalo; busca = 10.000 buscas 
 
 | Estrutura | Inserção 0–30% | Inserção 30–60% | Inserção 60–100% | Busca 30% | Busca 60% | Busca 100% |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Lista encadeada | 5,82 | 10,96 | 13,58 | 2.909 | 5.728 | 9.509 |
-| Hash aberto + multiplicacao | 12,39 | 13,69 | 21,86 | 0,26 | 0,29 | 0,32 |
-| Hash aberto + meio-quadrado | 13,88 | 13,69 | 22,40 | 0,28 | 0,32 | 0,36 |
-| Hash encadeado + multiplicacao | 29,32 | 26,60 | 34,60 | 0,31 | 0,44 | 0,49 |
-| Hash encadeado + meio-quadrado | 40,04 | 28,34 | 37,44 | 0,39 | 0,42 | 0,56 |
+| Lista encadeada | 7,44 | 9,95 | 16,25 | 4.010 | 8.611 | 11.462 |
+| Hash aberto + multiplicacao | 16,98 | 17,98 | 36,66 | 0,24 | 0,28 | 0,53 |
+| Hash aberto + meio-quadrado | 16,96 | 18,31 | 41,29 | 0,25 | 0,31 | 0,52 |
+| Hash encadeado + multiplicacao | 27,57 | 29,64 | 54,00 | 0,40 | 0,53 | 0,52 |
+| Hash encadeado + meio-quadrado | 29,23 | 31,76 | 41,44 | 0,49 | 0,62 | 0,55 |
 
-| Tabela hash | Colisões 0–30% | Colisões 30–60% | Colisões 60–100% | α após 30% / 60% / 100% | Sondagens extras (total) | Maior lista (100%) |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Hash aberto + multiplicacao | 20.941 | 59.356 | 129.980 | 0,15 / 0,30 / 0,50 | 488.803 | - |
-| Hash aberto + meio-quadrado | 21.567 | 60.371 | 131.855 | 0,15 / 0,30 / 0,50 | 502.976 | - |
-| Hash encadeado + multiplicacao | 20.941 | 59.356 | 129.980 | 0,15 / 0,30 / 0,50 | - | 7 |
-| Hash encadeado + meio-quadrado | 21.567 | 60.371 | 131.855 | 0,15 / 0,30 / 0,50 | - | 7 |
+| Tabela hash | Colisões 0–30% | Colisões 30–60% | Colisões 60–100% | Colisões (total) | α após 30% / 60% / 100% |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Hash aberto + multiplicacao | 20.941 | 59.356 | 129.980 | 210.277 | 0,15 / 0,30 / 0,50 |
+| Hash aberto + meio-quadrado | 21.567 | 60.371 | 131.855 | 213.793 | 0,15 / 0,30 / 0,50 |
+| Hash encadeado + multiplicacao | 20.941 | 59.356 | 129.980 | 210.277 | 0,15 / 0,30 / 0,50 |
+| Hash encadeado + meio-quadrado | 21.567 | 60.371 | 131.855 | 213.793 | 0,15 / 0,30 / 0,50 |
 
 ### 8.000.000 registros (TABLE_SIZE = 16.000.057)
 
@@ -251,49 +239,47 @@ Tempos em milissegundos. Inserção = tempo do intervalo; busca = 10.000 buscas 
 
 | Estrutura | Inserção 0–30% | Inserção 30–60% | Inserção 60–100% | Busca 30% | Busca 60% | Busca 100% |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Lista encadeada | 59,89 | 82,21 | 110,33 | 26.909 | 63.178 | 119.401 |
-| Hash aberto + multiplicacao | 113,20 | 121,85 | 220,81 | 0,32 | 0,35 | 0,46 |
-| Hash aberto + meio-quadrado | 120,96 | 131,71 | 242,88 | 0,41 | 0,40 | 0,53 |
-| Hash encadeado + multiplicacao | 218,57 | 231,12 | 323,04 | 0,51 | 0,59 | 0,77 |
-| Hash encadeado + meio-quadrado | 316,67 | 246,10 | 351,25 | 0,55 | 0,63 | 0,77 |
+| Lista encadeada | 48,75 | 102,34 | 136,09 | 33.568 | 78.606 | 122.078 |
+| Hash aberto + multiplicacao | 154,52 | 171,39 | 276,51 | 0,36 | 0,40 | 0,46 |
+| Hash aberto + meio-quadrado | 165,02 | 186,28 | 301,84 | 0,42 | 0,45 | 0,56 |
+| Hash encadeado + multiplicacao | 255,94 | 290,87 | 371,49 | 0,67 | 0,70 | 0,82 |
+| Hash encadeado + meio-quadrado | 284,22 | 316,36 | 410,30 | 0,71 | 0,83 | 1,04 |
 
-| Tabela hash | Colisões 0–30% | Colisões 30–60% | Colisões 60–100% | α após 30% / 60% / 100% | Sondagens extras (total) | Maior lista (100%) |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Hash aberto + multiplicacao | 145.370 | 417.631 | 932.051 | 0,15 / 0,30 / 0,50 | 3.315.227 | - |
-| Hash aberto + meio-quadrado | 171.453 | 481.988 | 1.049.954 | 0,15 / 0,30 / 0,50 | 3.998.796 | - |
-| Hash encadeado + multiplicacao | 145.370 | 417.631 | 932.051 | 0,15 / 0,30 / 0,50 | - | 6 |
-| Hash encadeado + meio-quadrado | 171.453 | 481.988 | 1.049.954 | 0,15 / 0,30 / 0,50 | - | 8 |
+| Tabela hash | Colisões 0–30% | Colisões 30–60% | Colisões 60–100% | Colisões (total) | α após 30% / 60% / 100% |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Hash aberto + multiplicacao | 145.370 | 417.631 | 932.051 | 1.495.052 | 0,15 / 0,30 / 0,50 |
+| Hash aberto + meio-quadrado | 171.453 | 481.988 | 1.049.954 | 1.703.395 | 0,15 / 0,30 / 0,50 |
+| Hash encadeado + multiplicacao | 145.370 | 417.631 | 932.051 | 1.495.052 | 0,15 / 0,30 / 0,50 |
+| Hash encadeado + meio-quadrado | 171.453 | 481.988 | 1.049.954 | 1.703.395 | 0,15 / 0,30 / 0,50 |
 
 ## Análise dos resultados
 
 ### 1. Busca: as tabelas hash são centenas de milhares de vezes mais rápidas que a lista
 
-Com 8 milhões de registros, as 10.000 buscas levaram **119 segundos** na lista e **menos de 1 milissegundo** em qualquer tabela hash (de 0,46 ms a 0,77 ms), uma diferença de 150 mil a 260 mil vezes. A lista faz busca sequencial, O(n): cada busca percorre em média metade dos nós. A tabela hash calcula a posição e testa, em média, 1 a 2 posições, O(1) no caso médio.
+Com 8 milhões de registros, as 10.000 buscas levaram **122 segundos** na lista e **cerca de 1 milissegundo ou menos** em qualquer tabela hash (de 0,46 ms a 1,04 ms), uma diferença de 117 mil a 265 mil vezes. A lista faz busca sequencial, O(n): cada busca percorre em média metade dos nós. A tabela hash calcula a posição e testa, em média, 1 a 2 posições, O(1) no caso médio.
 
-O tempo da lista também cresce **mais rápido que n**. De 100 mil para 8 milhões de registros (80 vezes mais dados), a busca ficou 139 vezes mais lenta. O custo por nó visitado subiu de 1,7 ns para 3,0 ns, porque a lista grande não cabe na memória cache do processador, e os nós passam a vir da memória RAM. Nas tabelas hash, o tempo de busca quase não muda entre volumes (0,25 ms, 0,32 ms e 0,46 ms no endereçamento aberto com multiplicação, após 100%), como prevê o custo O(1).
+O tempo da lista também cresce **mais rápido que n**. De 100 mil para 8 milhões de registros (80 vezes mais dados), a busca ficou 142 vezes mais lenta. O custo por nó visitado subiu de 1,7 ns para 3,1 ns, porque a lista grande não cabe na memória cache do processador, e os nós passam a vir da memória RAM. Nas tabelas hash, o tempo de busca fica abaixo de 1 ms em todos os volumes (0,27 ms, 0,53 ms e 0,46 ms no endereçamento aberto com multiplicação, após 100%), como prevê o custo O(1).
 
-O acesso à memória pesa muito nesse resultado. Numa versão anterior do projeto, o nó guardava só o ponteiro para o `Aluno`, e a busca precisava ir até o registro para ler a matrícula a cada nó. Com 1 milhão de registros, a busca na lista levava 30,5 s. Guardando a matrícula no próprio nó, caiu para 9,5 s, sem mudar a complexidade, que continua O(n).
+O acesso à memória pesa muito nesse resultado. Numa versão anterior do projeto, o nó guardava só o ponteiro para o `Aluno`, e a busca precisava ir até o registro para ler a matrícula a cada nó. Com 1 milhão de registros, a busca na lista levava 30,5 s. Guardando a matrícula no próprio nó, caiu para 11,5 s, sem mudar a complexidade, que continua O(n).
 
 ### 2. Inserção: a lista é a mais rápida, e o encadeamento é o mais lento
 
-A inserção no início da lista é O(1) e só faz um `malloc` e algumas atribuições, por isso é a mais rápida com 1 milhão e 8 milhões de registros. Com 100 mil, todos os tempos ficam entre 1 e 4 ms e as diferenças são pequenas. O endereçamento aberto vem em seguida: calcula o hash e preenche um item de um vetor já alocado. O encadeamento separado é o mais lento para inserir, em geral cerca de 2 vezes o endereçamento aberto (entre 1,3 e 2,9 vezes, conforme a etapa), porque faz um `malloc` por elemento. Isso concorda com Richter, Alvarez e Dittrich (2015), que recomendam evitar o encadeamento em cargas com muitas escritas.
-
-No encadeamento, a primeira etapa às vezes é mais lenta que a segunda (por exemplo, 316,67 ms contra 246,10 ms com meio-quadrado e 8 milhões). O `calloc` reserva a tabela, mas o sistema operacional só entrega as páginas de memória quando elas são usadas pela primeira vez, e esse custo cai dentro da primeira etapa. No endereçamento aberto isso não acontece, porque a criação da tabela já percorre todas as posições para marcá-las como `VAZIO`.
+A inserção no início da lista é O(1) e só faz um `malloc` e algumas atribuições, por isso é a mais rápida com 1 milhão e 8 milhões de registros. Com 100 mil, todos os tempos ficam entre 1 e 4 ms e as diferenças são pequenas. O endereçamento aberto vem em seguida: calcula o hash e preenche um item de um vetor já alocado. O encadeamento separado é o mais lento para inserir, em geral de 1,3 a 1,7 vezes o tempo do endereçamento aberto (de 1,0 a 2,0 vezes, conforme a etapa), porque faz um `malloc` por elemento. Isso concorda com Richter, Alvarez e Dittrich (2015), que recomendam evitar o encadeamento em cargas com muitas escritas.
 
 ### 3. Endereçamento aberto contra encadeamento separado
 
-Com o mesmo fator de carga (α = 0,5), o endereçamento aberto também foi mais rápido na busca após a última etapa, em todos os volumes (por exemplo, 0,46 ms contra 0,77 ms com 8 milhões). Nas etapas iniciais de 100 mil registros, as buscas levam menos de 0,4 ms e as diferenças se confundem com a variação da medição. Ele compara a matrícula direto no vetor, e as posições vizinhas da sondagem linear ficam na mesma linha de cache. No encadeamento, cada elemento está num nó alocado separadamente, e é preciso seguir um ponteiro a mais até ele.
+Com o mesmo fator de carga (α = 0,5), o endereçamento aberto também foi mais rápido ou empatou na busca após a última etapa (com 8 milhões, 0,46 ms contra 0,82 ms usando multiplicação; com 1 milhão e multiplicação, 0,53 ms contra 0,52 ms). Com tempos abaixo de 1 ms, pequenas diferenças se confundem com a variação da medição. Ele compara a matrícula direto no vetor, e as posições vizinhas da sondagem linear ficam na mesma linha de cache. No encadeamento, cada elemento está num nó alocado separadamente, e é preciso seguir um ponteiro a mais até ele.
 
-O agrupamento primário da sondagem linear ficou sob controle. A média de **sondagens extras por inserção** foi 0,50 com o meio-quadrado e de 0,41 a 0,50 com a multiplicação, exatamente o que a análise clássica prevê para encher uma tabela até α = 0,5 (KNUTH, 1998): a média de ½(1 + 1/(1 − α)²) − 1 entre α = 0 e α = 0,5 é 0,5. Com uma tabela mais cheia, esse número cresceria rapidamente, como observaram Peterson (1957) e Heileman e Luo (2005).
+Com α ≤ 0,5, o agrupamento primário da sondagem linear fica sob controle: pela análise clássica (KNUTH, 1998), uma busca bem-sucedida testa em média 1,5 posições. Com uma tabela mais cheia, esse número cresceria rapidamente, como observaram Peterson (1957) e Heileman e Luo (2005).
 
 ### 4. Multiplicação contra meio-quadrado
 
-As duas funções espalharam bem as matrículas: a maior lista do encadeamento teve só 6 a 8 elementos, com média de 0,5.
+As duas funções espalharam bem as matrículas.
 
 - **Meio-quadrado:** as colisões ficaram praticamente iguais às esperadas para uma função ideal, que espalhasse as chaves ao acaso: 1.703.395 contra 1.704.485 esperadas com 8 milhões, cerca de 21,3% das inserções.
 - **Multiplicação:** ficou igual ao esperado com 100 mil e 1 milhão de registros, e **12% abaixo** com 8 milhões (1.495.052 colisões). Os valores de frac(k × A) com A = (√5 − 1)/2 ficam bem distribuídos entre 0 e 1 (KNUTH, 1998), e o efeito aparece quando a base ocupa uma parte maior do espaço de matrículas.
 
-Com menos colisões, a multiplicação também teve menos sondagens extras (0,41 por inserção) e, em todas as medições do volume grande, tempos de inserção e busca iguais ou um pouco menores. A diferença de tempo entre as duas funções, porém, é pequena perto da diferença entre as estruturas.
+Com menos colisões, a multiplicação também teve, em todas as medições do volume grande, tempos de inserção e busca um pouco menores. A diferença de tempo entre as duas funções, porém, é pequena perto da diferença entre as estruturas.
 
 ### Conclusão
 
