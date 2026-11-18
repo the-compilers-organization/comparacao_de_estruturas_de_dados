@@ -1,0 +1,82 @@
+Lendo data/alunos.txt ...
+10000000 alunos carregados.
+
+========== VOLUME: 100000 registros | TABLE_SIZE = 200003 ==========
+
+--- Etapa 30%: registros 1 a 30000 ---
+Estrutura                        Insercao(ms)    Busca(ms)   Colisoes   Alfa
+Lista encadeada                          1.01       271.09          -      -
+Hash aberto + multiplicacao              1.40         0.15       2176   0.15
+Hash aberto + meio-quadrado              1.57         0.17       2150   0.15
+Hash encadeado + multiplicacao           2.84         0.22       2176   0.15
+Hash encadeado + meio-quadrado           2.30         0.15       2150   0.15
+
+--- Etapa 60%: registros 30001 a 60000 ---
+Estrutura                        Insercao(ms)    Busca(ms)   Colisoes   Alfa
+Lista encadeada                          1.37       540.17          -      -
+Hash aberto + multiplicacao              1.50         0.22       6073   0.30
+Hash aberto + meio-quadrado              1.58         0.28       6011   0.30
+Hash encadeado + multiplicacao           2.49         0.27       6073   0.30
+Hash encadeado + meio-quadrado           2.88         0.35       6011   0.30
+
+--- Etapa 100%: registros 60001 a 100000 ---
+Estrutura                        Insercao(ms)    Busca(ms)   Colisoes   Alfa
+Lista encadeada                          1.45       940.08          -      -
+Hash aberto + multiplicacao              2.39         0.24      13215   0.50
+Hash aberto + meio-quadrado              2.25         0.26      13199   0.50
+Hash encadeado + multiplicacao           2.90         0.34      13215   0.50
+Hash encadeado + meio-quadrado           3.84         0.39      13199   0.50
+
+========== VOLUME: 1000000 registros | TABLE_SIZE = 2000003 ==========
+
+--- Etapa 30%: registros 1 a 300000 ---
+Estrutura                        Insercao(ms)    Busca(ms)   Colisoes   Alfa
+Lista encadeada                          8.66      2882.00          -      -
+Hash aberto + multiplicacao             17.64         0.19      20941   0.15
+Hash aberto + meio-quadrado             18.73         0.34      21567   0.15
+Hash encadeado + multiplicacao          41.63         0.50      20941   0.15
+Hash encadeado + meio-quadrado          37.89         0.51      21567   0.15
+
+--- Etapa 60%: registros 300001 a 600000 ---
+Estrutura                        Insercao(ms)    Busca(ms)   Colisoes   Alfa
+Lista encadeada                         14.59      5889.58          -      -
+Hash aberto + multiplicacao             15.60         0.28      59356   0.30
+Hash aberto + meio-quadrado             16.75         0.33      60371   0.30
+Hash encadeado + multiplicacao          28.02         0.33      59356   0.30
+Hash encadeado + meio-quadrado          28.68         0.36      60371   0.30
+
+--- Etapa 100%: registros 600001 a 1000000 ---
+Estrutura                        Insercao(ms)    Busca(ms)   Colisoes   Alfa
+Lista encadeada                         16.08     10141.99          -      -
+Hash aberto + multiplicacao             24.54         0.28     129980   0.50
+Hash aberto + meio-quadrado             25.87         0.32     131855   0.50
+Hash encadeado + multiplicacao          37.84         0.41     129980   0.50
+Hash encadeado + meio-quadrado          40.20         0.50     131855   0.50
+
+========== VOLUME: 10000000 registros | TABLE_SIZE = 20000003 ==========
+
+--- Etapa 30%: registros 1 a 3000000 ---
+Estrutura                        Insercao(ms)    Busca(ms)   Colisoes   Alfa
+Lista encadeada                        101.79     34800.41          -      -
+Hash aberto + multiplicacao            179.81         0.30     174126   0.15
+Hash aberto + meio-quadrado            203.14         0.43     214004   0.15
+Hash encadeado + multiplicacao         399.45         0.45     174126   0.15
+Hash encadeado + meio-quadrado         372.41         0.83     214004   0.15
+
+--- Etapa 60%: registros 3000001 a 6000000 ---
+Estrutura                        Insercao(ms)    Busca(ms)   Colisoes   Alfa
+Lista encadeada                        126.50    134635.02          -      -
+Hash aberto + multiplicacao            177.11         0.34     502503   0.30
+Hash aberto + meio-quadrado            198.75         0.41     601224   0.30
+Hash encadeado + multiplicacao         312.55         0.62     502503   0.30
+Hash encadeado + meio-quadrado         341.13         0.67     601224   0.30
+
+--- Etapa 100%: registros 6000001 a 10000000 ---
+Estrutura                        Insercao(ms)    Busca(ms)   Colisoes   Alfa
+Lista encadeada                        156.95    273215.66          -      -
+Hash aberto + multiplicacao            301.92         0.45    1130579   0.50
+Hash aberto + meio-quadrado            352.45         0.52    1313439   0.50
+Hash encadeado + multiplicacao         468.72         0.74    1130579   0.50
+Hash encadeado + meio-quadrado         495.87         0.83    1313439   0.50
+
+Resultados salvos em resultados/resultados.csv
