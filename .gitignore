@@ -5,6 +5,7 @@ projeto.exe
 
 # base de dados: mais de 300 MB, acima do limite de 100 MB do GitHub
 # (a pasta data/ vai para o repositorio vazia, so com o .gitkeep)
+data/*
+!data/.gitkeep
 
 .vscode
-.data
