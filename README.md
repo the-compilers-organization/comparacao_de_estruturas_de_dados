@@ -1,10 +1,73 @@
-# Projeto 2º GQ: Comparação de Estruturas de Dados
+<h1>Estrutura de Dados Lineares — Comparação de Estruturas de Dados</h1>
 
-Disciplina: Estrutura de Dados Lineares (INF1923), UNICAP, 2026.2.
+<p align="center">
+  <img src="https://img.shields.io/static/v1?label=C&message=C99&color=A8B9CC&style=for-the-badge&logo=c"/>
+  <img src="https://img.shields.io/static/v1?label=GCC&message=-O2&color=4E9A06&style=for-the-badge&logo=gnu"/>
+  <img src="https://img.shields.io/static/v1?label=Python&message=3.x&color=3776AB&style=for-the-badge&logo=python"/>
+  <img src="https://img.shields.io/static/v1?label=Git&message=2.x&color=f05032&style=for-the-badge&logo=git"/>
+  <img src="https://img.shields.io/static/v1?label=GitHub&message=2026&color=181717&style=for-the-badge&logo=github"/>
+  <img src="https://img.shields.io/static/v1?label=STATUS&message=CONCLU%C3%8DDO&color=success&style=for-the-badge"/>
+</p>
 
-Integrantes: _(preencher)_
+> Status do Projeto: :heavy_check_mark: (concluído) | :warning: (em desenvolvimento) | :x: (não iniciado)
 
-Este projeto compara cinco implementações em C nas operações de **inserção** e **busca por matrícula**, usando a base do Cadastro Nacional de Estudantes (`matricula;nome;curso`):
+---
+
+# Tópicos
+
+:small_blue_diamond: [Contexto](#contexto-information_source)
+
+:small_blue_diamond: [Problema](#problema-writing_hand)
+
+:small_blue_diamond: [Objetivo](#objetivo-dart)
+
+:small_blue_diamond: [Estrutura do Projeto](#estrutura-do-projeto-file_folder)
+
+:small_blue_diamond: [Pré-requisitos](#pré-requisitos-warning)
+
+:small_blue_diamond: [Instalação](#instalação-rocket)
+
+:small_blue_diamond: [Como Rodar o Projeto](#como-rodar-o-projeto-computer)
+
+:small_blue_diamond: [Como o Experimento Funciona](#como-o-experimento-funciona-gear)
+
+:small_blue_diamond: [Decisões de Projeto](#decisões-de-projeto-bulb)
+
+:small_blue_diamond: [Resultados](#resultados-bar_chart)
+
+:small_blue_diamond: [Análise dos Resultados](#análise-dos-resultados-chart_with_upwards_trend)
+
+:small_blue_diamond: [Conclusão](#conclusão-checkered_flag)
+
+:small_blue_diamond: [Tecnologias Utilizadas](#tecnologias-utilizadas-wrench)
+
+:small_blue_diamond: [Documentação](#documentação-book)
+
+:small_blue_diamond: [Referências](#referências-books)
+
+:small_blue_diamond: [Desenvolvedores](#desenvolvedores-octocat)
+
+---
+
+# Contexto :information_source:
+
+<p align="justify">
+O projeto foi desenvolvido para a disciplina de <strong>Estrutura de Dados Lineares (INF1923)</strong>, do curso de <strong>Ciência da Computação da Universidade Católica de Pernambuco (UNICAP)</strong>, no semestre 2026.2, como Projeto do 2º GQ.
+</p>
+
+<p align="justify">
+O trabalho implementa em C, como Tipos Abstratos de Dados, uma estrutura linear e quatro tabelas hash, e compara o desempenho delas nas operações de <strong>inserção</strong> e <strong>busca por matrícula</strong>, numa base de até 10 milhões de registros.
+</p>
+
+---
+
+# Problema :writing_hand:
+
+<p align="justify">
+A base de dados é o Cadastro Nacional de Estudantes, com um registro por linha no formato <code>matricula;nome;curso</code>. É preciso guardar esses registros e encontrar um estudante pela matrícula, com volumes de <strong>100 mil</strong>, <strong>1 milhão</strong> e <strong>10 milhões</strong> de registros.
+</p>
+
+Foram comparadas cinco implementações:
 
 | # | Estrutura | Tratamento de colisão | Função hash |
 | --- | --- | --- | --- |
@@ -14,13 +77,32 @@ Este projeto compara cinco implementações em C nas operações de **inserção
 | 4 | Tabela hash | Encadeamento separado | Multiplicação |
 | 5 | Tabela hash | Encadeamento separado | Meio-quadrado |
 
-## Organização do código (TAD)
+---
 
-Cada estrutura é um Tipo Abstrato de Dados: um `.h` com o tipo opaco (`typedef struct x* X`) e as operações, e um `.c` com a implementação. Toda a memória é alocada dinamicamente.
+# Objetivo :dart:
+
+<p align="justify">
+O objetivo é medir e comparar o tempo de inserção e de busca das cinco implementações, o número de colisões e o fator de carga das tabelas hash, e explicar as diferenças com base na complexidade de cada estrutura, nas estratégias de tratamento de colisão e nas funções hash.
+</p>
+
+<p align="justify">
+Além dos resultados, o trabalho justifica as escolhas de projeto: o tamanho da tabela, o tipo de sondagem, as funções hash, a forma de contar colisões e a remoção nas tabelas hash.
+</p>
+
+---
+
+# Estrutura do Projeto :file_folder:
+
+<p align="justify">
+Cada estrutura é um Tipo Abstrato de Dados: um <code>.h</code> com o tipo opaco (<code>typedef struct x* X</code>) e as operações, e um <code>.c</code> com a implementação. Toda a memória é alocada dinamicamente.
+</p>
 
 ```
 comparacao_de_estruturas_de_dados/
 ├── data/                      base de dados (alunos.txt)
+├── doc/
+│   ├── Comparacao_de_Estruturas_de_Dados_Projeto_2_GQ.pptx   slides da apresentação
+│   └── Projeto 2GQ.pdf        orientações do projeto (professor)
 ├── resultados/                resultados da execução descrita em "Resultados"
 │   ├── resultados.csv         medições (gerado pelo programa)
 │   ├── resultados.md          as mesmas medições em tabelas, etapa por etapa
@@ -52,6 +134,7 @@ comparacao_de_estruturas_de_dados/
 └── README.md
 ```
 
+
 Cada estrutura tem sua pasta em `src/`. Os módulos de apoio ficam em `src/utils/`, e as pastas das estruturas os incluem com `#include "../utils/aluno.h"`. O `main.c` fica na raiz de `src/` e inclui tudo pelo caminho da pasta, como `#include "lista/lista.h"`.
 
 | Módulo | Conteúdo |
@@ -67,13 +150,70 @@ Cada estrutura tem sua pasta em `src/`. Os módulos de apoio ficam em `src/utils
 
 Convenção de retorno: as funções de inserção devolvem **1 = sucesso, 0 = falha** (como no `1_tabela_hash.c` da disciplina). As buscas devolvem o `Aluno` encontrado ou `NULL`.
 
-## Como compilar e executar
 
-Requisito: `gcc`. Baixe a base do Teams da disciplina e salve como **`data/alunos.txt`**. **A base não vai para o repositório**: ela tem mais de 300 MB e o GitHub recusa arquivos acima de 100 MB. O `.gitignore` envia só a pasta `data/` vazia (com um `.gitkeep`).
+---
+
+# Pré-requisitos :warning:
+
+Antes de clonar o repositório e executar o projeto, é necessário ter:
+
+**1. Compilador C (gcc):**
+  - No Windows, instale o MinGW-w64: https://www.mingw-w64.org/downloads/
+  - No Linux, instale o pacote `gcc` (por exemplo, `sudo apt install gcc`); no macOS, as ferramentas de linha de comando do Xcode (`xcode-select --install`).
+
+**2. Git:**
+  - Caso não tenha Git, instale: https://git-scm.com/install/
+
+**3. Python 3.x com matplotlib (só para gerar os gráficos):**
+  - Caso não tenha Python, instale: https://www.python.org/downloads/
+
+**4. Base de dados `alunos.txt`:**
+  - Disponível no Teams da disciplina. Ela não vai para o repositório: tem mais de 300 MB, e o GitHub recusa arquivos acima de 100 MB.
+
+**5. Memória:**
+  - Com 10 milhões de registros, o programa ocupa cerca de 3,3 GB de RAM. Feche outros programas antes de rodar.
+
+---
+
+# Instalação :rocket:
+
+### 1️⃣ Clonar o repositório
+
+```bash
+git clone https://github.com/the-compilers-organization/comparacao_de_estruturas_de_dados.git
+```
+
+---
+
+### 2️⃣ Entrar na pasta do projeto
+
+```bash
+cd comparacao_de_estruturas_de_dados
+```
+
+---
+
+### 3️⃣ Colocar a base de dados
+
+Salve o arquivo baixado do Teams como **`data/alunos.txt`**. O `.gitignore` envia só a pasta `data/` vazia (com um `.gitkeep`).
+
+---
+
+### 4️⃣ Instalar o matplotlib (para os gráficos)
+
+```bash
+pip install matplotlib
+```
+
+---
+
+# Como Rodar o Projeto :computer:
 
 Os comandos abaixo são executados **na pasta raiz do projeto** (onde está o `README.md`).
 
-**Compilar** (o mesmo comando no Linux, no macOS e no Windows; no Windows, troque `-o projeto` por `-o projeto.exe`):
+### 1️⃣ Compilar
+
+O mesmo comando no Linux, no macOS e no Windows; no Windows, troque `-o projeto` por `-o projeto.exe`:
 
 ```bash
 gcc -Wall -Wextra -O2 -std=c99 src/main.c src/utils/aluno.c src/utils/leitura.c src/utils/saida.c src/utils/funcoes_hash.c src/lista/lista.c src/hash_aberto/hash_aberto.c src/hash_encadeado/hash_encadeado.c -o projeto
@@ -81,7 +221,9 @@ gcc -Wall -Wextra -O2 -std=c99 src/main.c src/utils/aluno.c src/utils/leitura.c 
 
 O comando lista todos os `.c` do projeto: os da raiz de `src/` e um de cada pasta de estrutura. Os `.h` não entram no comando, porque são incluídos pelos próprios `.c` com `#include`.
 
-**Executar** (também a partir da pasta raiz):
+---
+
+### 2️⃣ Executar
 
 ```bash
 ./projeto          # no Windows: projeto.exe
@@ -92,9 +234,13 @@ O programa lê `data/alunos.txt`, roda os volumes de 100 mil, 1 milhão e 10 mil
 - **`resultados.csv`**: uma linha por estrutura e etapa, com tempos, matrículas encontradas, colisões e fator de carga;
 - **`saida_console.txt`**: tudo o que apareceu na tela, gravado automaticamente, sem copiar e colar do terminal. O arquivo é gravado linha a linha: se o programa for interrompido no meio, o que já saiu na tela fica salvo.
 
-Os dois arquivos são recriados a cada execução. **Atenção:** os arquivos que vêm no repositório são os da execução descrita em [Resultados](#resultados). Ao rodar o programa e o script de gráficos, eles são substituídos pelos resultados da sua máquina.
+> Os dois arquivos são recriados a cada execução. Os arquivos que vêm no repositório são os da execução descrita em [Resultados](#resultados-bar_chart). Ao rodar o programa e o script de gráficos, eles são substituídos pelos resultados novos.
 
-**Gerar os gráficos** (depois de executar o programa, também a partir da pasta raiz). Requisito: Python 3 com matplotlib (`pip install matplotlib`).
+---
+
+### 3️⃣ Gerar os gráficos
+
+Depois de executar o programa, também a partir da pasta raiz:
 
 ```bash
 python scripts/gerar_graficos.py          # no Linux/macOS, pode ser python3
@@ -115,7 +261,11 @@ O script lê `resultados/resultados.csv` e grava oito gráficos PNG em `resultad
 
 Para outro CSV, passe o arquivo e a pasta de saída: `python scripts/gerar_graficos.py outro.csv outra_pasta`. As cores de cada estrutura são as mesmas em todos os gráficos, e o encadeamento separado aparece com hachura. No Windows, buscas abaixo de 1 ms podem ser medidas como 0 (veja *Medição com `clock()`*); essas barras ficam de fora, e o gráfico avisa numa nota.
 
-Para testar com outros volumes, altere o vetor no início do `main`, em `src/main.c`:
+---
+
+### Outras opções
+
+**Outros volumes:** altere o vetor no início do `main`, em `src/main.c`:
 
 ```c
 int volumes[3] = {100000, 1000000, 10000000};
@@ -125,11 +275,13 @@ Se o arquivo tiver menos registros que um volume, aquele volume é pulado com um
 
 **No VS Code:** a tarefa "Compilar C/C++" compila só os `.c` da pasta do arquivo aberto, e por isso não serve para este projeto, que tem pastas separadas. Use a tarefa **"Compilar projeto"** (Terminal → Executar Tarefa) e a configuração de execução **"Executar projeto"**: as duas trabalham a partir da pasta raiz, onde o programa encontra `data/alunos.txt`. A tarefa precisa listar os mesmos `.c` do comando acima, incluindo `src/utils/saida.c`.
 
-**Memória:** com 10 milhões de registros, os registros e as cinco estruturas juntos ocupam cerca de 3,3 GB de RAM (cada aluno ocupa 104 bytes com `TAM 50`, e cada posição do endereçamento aberto, 16 bytes). Feche outros programas antes de rodar.
+**Memória:** com 10 milhões de registros, os registros e as cinco estruturas juntos ocupam cerca de 3,3 GB de RAM (cada aluno ocupa 104 bytes com `TAM 50`, e cada posição do endereçamento aberto, 16 bytes).
 
 **Tempo:** a lista encadeada domina o tempo total, porque cada uma das 10.000 buscas percorre, em média, metade da lista. No ambiente de teste, a execução completa (100 mil, 1 milhão e 10 milhões) levou 8 minutos, quase todos (7 min 43 s) em buscas na lista. Num computador mais lento ou com menos memória livre, pode levar bem mais.
 
-## Como o experimento funciona
+---
+
+# Como o Experimento Funciona :gear:
 
 Para cada volume (100 mil, 1 milhão e 10 milhões):
 
@@ -141,7 +293,9 @@ Para cada volume (100 mil, 1 milhão e 10 milhões):
 
 Ficam **fora** das medições de tempo a leitura do arquivo e o sorteio das matrículas.
 
-## Decisões de projeto e justificativas
+---
+
+# Decisões de Projeto :bulb:
 
 ### 1. Lista unicamente encadeada com inserção no início
 
@@ -223,7 +377,9 @@ Para comparação, se a função espalhasse as chaves de forma perfeitamente ale
 - **Saída gravada em arquivo (`saida.h/.c`):** em vez de `printf`, o programa usa `escrever`, que recebe os mesmos argumentos e escreve na tela e em `resultados/saida_console.txt`. Para repassar os argumentos variáveis (`...`) ao `vprintf` e ao `vfprintf`, a função usa `va_list`, de `stdarg.h`, a única parte do projeto além do conteúdo da disciplina. Depois de cada escrita, `fflush` grava o texto no arquivo na hora, para nada se perder se o programa for interrompido. O arquivo fica aberto do início ao fim da execução, e só o módulo `saida.c` acessa o ponteiro dele (`static`).
 - **Código simples:** fora o `stdarg.h` do item anterior, o projeto usa só recursos de programação estruturada em C (`struct`, ponteiros, `malloc`/`free`, `if`, `for`, `while` e funções). Cada estrutura tem funções separadas e curtas, e o `main.c` testa as cinco estruturas uma depois da outra, sem truques.
 
-## Resultados
+---
+
+# Resultados :bar_chart:
 
 Os resultados abaixo foram obtidos num ambiente de teste (Linux em nuvem, processador Intel Xeon 2,1 GHz, 2 núcleos, 8 GB de RAM, `gcc 13.3 -O2`), com a base completa de 10 milhões de registros. A execução inteira levou 8 minutos, e o programa ocupou cerca de 3,3 GB de RAM no volume de 10 milhões.
 
@@ -286,7 +442,9 @@ Tempos em milissegundos. Inserção = tempo do intervalo; busca = 10.000 buscas 
 | Hash encadeado + multiplicacao | 174.126 | 502.503 | 1.130.579 | 1.807.208 | 0,15 / 0,30 / 0,50 |
 | Hash encadeado + meio-quadrado | 214.004 | 601.224 | 1.313.439 | 2.128.667 | 0,15 / 0,30 / 0,50 |
 
-## Análise dos resultados
+---
+
+# Análise dos Resultados :chart_with_upwards_trend:
 
 ### 1. Busca: as tabelas hash são centenas de milhares de vezes mais rápidas que a lista
 
@@ -333,13 +491,50 @@ As duas funções espalharam bem as matrículas.
 
 Com menos colisões, a multiplicação também teve, no volume de 10 milhões, tempos de inserção e busca menores que os do meio-quadrado na mesma estratégia em todas as medições, exceto na inserção de 0–30% no encadeamento (399 ms contra 372 ms). A diferença de tempo entre as duas funções, porém, é pequena perto da diferença entre as estruturas.
 
-### Conclusão
+---
+
+# Conclusão :checkered_flag:
 
 - **Para buscar por matrícula:** qualquer configuração de tabela hash é a escolha certa, e a melhor foi **endereçamento aberto com sondagem linear e método da multiplicação**, com α ≤ 0,5.
 - **Para só inserir**, a lista é mais rápida, mas inviável para buscas: 10.000 buscas levaram cerca de 4,5 minutos com 10 milhões de registros.
 - **Encadeamento separado:** é uma boa alternativa quando não se sabe quantos registros virão, porque a tabela nunca enche e α pode passar de 1. A remoção também é mais simples, porque não precisa de marca. O preço é a inserção mais lenta e mais memória para os nós.
 
-## Referências
+---
+
+# Tecnologias Utilizadas :wrench:
+
+- **C (C99)**: estruturas de dados e experimentos
+- **gcc**: compilação, com `-Wall -Wextra -O2`
+- **Python 3**: script de gráficos
+- **Matplotlib**: geração dos gráficos PNG
+- **Git**
+- **GitHub**
+
+> O programa em C usa só a biblioteca padrão (`stdio.h`, `stdlib.h`, `string.h`, `time.h` e `stdarg.h`), que já vem com o compilador.
+
+---
+
+# Documentação :book:
+
+- [Resultados completos, etapa por etapa](resultados/resultados.md)
+- [Medições em CSV](resultados/resultados.csv)
+- [Saída da tela da execução](resultados/saida_console.txt)
+- [Gráficos](resultados/graficos/)
+- [Slides da apresentação (PowerPoint)](doc/Comparacao_de_Estruturas_de_Dados_Projeto_2_GQ.pptx)
+- [Orientações do projeto, do professor (PDF)](doc/Projeto%202GQ.pdf)
+
+A apresentação mostra:
+
+- O problema e as cinco implementações
+- A organização do código em TADs
+- As funções hash e o tamanho da tabela
+- A metodologia do experimento
+- Os resultados de busca, inserção, estratégias de colisão e funções hash
+- As conclusões e a demonstração do código
+
+---
+
+# Referências :books:
 
 CORMEN, T. H.; LEISERSON, C. E.; RIVEST, R. L.; STEIN, C. **Introduction to Algorithms**. 3. ed. Cambridge: MIT Press, 2009. Cap. 11: Hash Tables.
 
@@ -354,3 +549,14 @@ MAURER, W. D.; LEWIS, T. G. Hash table methods. **ACM Computing Surveys**, v. 7,
 PETERSON, W. W. Addressing for random-access storage. **IBM Journal of Research and Development**, v. 1, n. 2, p. 130–146, 1957. DOI: 10.1147/rd.12.0130.
 
 RICHTER, S.; ALVAREZ, V.; DITTRICH, J. A seven-dimensional analysis of hashing methods and its implications on query processing. **Proceedings of the VLDB Endowment**, v. 9, n. 3, p. 96–107, 2015.
+
+---
+
+# Desenvolvedores :octocat:
+
+Time responsável pelo desenvolvimento do projeto.
+
+| [<img src="https://github.com/Amanda-Aziz.png" width="115"><br><sub>Amanda Aziz</sub>](https://github.com/Amanda-Aziz) | [<img src="https://github.com/Caio616.png" width="115"><br><sub>Caio</sub>](https://github.com/Caio616) | [<img src="https://github.com/francisLauriano.png" width="115"><br><sub>Francis Lauriano</sub>](https://github.com/francisLauriano) |
+| :---: | :---: | :---: |
+
+---
